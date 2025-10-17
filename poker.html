@@ -1,1 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Poker Game (Simple)</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #0b3d0b;
+      color: white;
+      text-align: center;
+      padding: 30px;
+    }
+    h1 {
+      margin-bottom: 10px;
+    }
+    .cards {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin: 20px 0;
+    }
+    .card {
+      background-color: white;
+      color: black;
+      border-radius: 8px;
+      padding: 10px;
+      width: 60px;
+      height: 90px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: bold;
+      border: 2px solid black;
+    }
+    .red {
+      color: red;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      background-color: #228B22;
+      color: white;
+      border: none;
+      border-radius: 5px;
+    }
+    #result {
+      margin-top: 20px;
+      font-size: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Simple Poker Game</h1>
+  <button onclick="deal()">Deal Cards</button>
+
+  <h2>Your Hand</h2>
+  <div id="player" class="cards"></div>
+
+  <h2>Computer's Hand</h2>
+  <div id="computer" class="cards"></div>
+
+  <div id="result"></div>
+
+  <script>
+    const suits = ['♠', '♥', '♦', '♣'];
+    const values = [
+      '2', '3', '4', '5', '6', '7', '8',
+      '9', '10', 'J', 'Q', 'K', 'A'
+    ];
+
+    function createDeck() {
+      const deck = [];
+      for (let suit of suits) {
+        for (let value of values) {
+          deck.push({ value, suit });
+        }
+      }
+      return deck;
+    }
+
+    function shuffle(deck) {
+      for (let i = deck.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [deck[i], deck[j]] = [deck[j], deck[i]];
+      }
+      return deck;
+    }
+
+    function getCardValue(card) {
+      const valOrder = {
+        '2': 2, '3': 3, '4': 4, '5': 5,
+        '6': 6, '7': 7, '8': 8, '9': 9,
+        '10': 10, 'J': 11, 'Q': 12, 'K': 13, 'A': 14
+      };
+      return valOrder[card.value];
+    }
+
+    function renderHand(containerId, hand) {
+      const container = document.getElementById(containerId);
+      container.innerHTML = '';
+      for (let card of hand) {
+        const cardDiv = document.createElement('div');
+        cardDiv.className = 'card';
+        if (card.suit === '♥' || card.suit === '♦') cardDiv.classList.add('red');
+        cardDiv.textContent = card.value + card.suit;
+        container.appendChild(cardDiv);
+      }
+    }
+
+    function highestCard(hand) {
+      return Math.max(...hand.map(getCardValue));
+    }
+
+    function deal() {
+      let deck = shuffle(createDeck());
+      const playerHand = deck.slice(0, 5);
+      const computerHand = deck.slice(5, 10);
+
+      renderHand('player', playerHand);
+      renderHand('computer', computerHand);
+
+      const playerHigh = highestCard(playerHand);
+      const computerHigh = highestCard(computerHand);
+
+      let resultText = '';
+      if (playerHigh > computerHigh) {
+        resultText = "🎉 You win! (High card)";
+      } else if (playerHigh < computerHigh) {
+        resultText = "💻 Computer wins! (High card)";
+      } else {
+        resultText = "🤝 It's a tie!";
+      }
+      document.getElementById('result').textContent = resultText;
+    }
+  </script>
+</body>
+</html>
 
